@@ -17,6 +17,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 
 load_dotenv(find_dotenv())
+
+
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
 
