@@ -31,7 +31,7 @@ retaining_memory = ConversationBufferWindowMemory(
     memory_key="chat_history", k=5, return_messages=True
 )
 
-loader = PyPDFLoader("my_pdf.pdf")
+loader = PyPDFLoader("../FILIPPO_EPSOP.pdf")
 pages = loader.load()
 
 document_splitter = RecursiveCharacterTextSplitter(chunk_size=700, chunk_overlap=70)

@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+    app:
+        build:
+            context: .
+            network: host
+            dockerfile: Dockerfile
+        image: document-explainer-image
+        container_name: document_explainer
+        volumes:
+            - .:/app
+        env_file:
+          - .env
+        command: bash
