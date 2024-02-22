@@ -1,4 +1,4 @@
-# Instructions for Setting Up OpenAI API with Docker
+# Instructions for Setting Up the Document Explainer with OpenAI API with Docker
 
 1. **Get OpenAI API Keys**:
    - Go to OpenAI and obtain your API Keys.
