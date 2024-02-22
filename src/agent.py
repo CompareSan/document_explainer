@@ -42,7 +42,9 @@ def build_agent(docs):
         Tool(
             name="Knowledge Base",
             func=question_answering.run,
-            description=("use this tool when answering questions related to pdf file"),
+            description=(
+                "use this tool when answering questions related to a document"
+            ),
         )
     ]
 
