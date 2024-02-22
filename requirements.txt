@@ -86,6 +86,7 @@ opentelemetry-util-http==0.43b0
 overrides==7.7.0
 pandas==2.1.4
 pathspec==0.12.1
+pdfplumber==0.10.4
 Pillow==10.1.0
 posthog==3.4.1
 pre-commit==3.6.1
