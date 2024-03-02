@@ -1,8 +1,11 @@
-from langchain.document_loaders import PDFPlumberLoader
+import streamlit as st
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import PDFPlumberLoader
+from langchain_core.documents import Document
 
 
-def load_document(file_path: str):
+@st.cache_data
+def load_document(file_path: str) -> list[Document]:
 
     loader = PDFPlumberLoader(file_path)
     pages = loader.load()

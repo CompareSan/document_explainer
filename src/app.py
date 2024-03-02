@@ -21,11 +21,6 @@ if uploaded_file is not None:
     document_path = "temp.pdf"
 
 
-# Initialize LLM agent
-def initialize_agent(document):
-    return build_agent(document)
-
-
 # Initialize chat history
 if "messages" not in st.session_state:
     # Start with first message from assistant
@@ -35,7 +30,6 @@ if "messages" not in st.session_state:
             "content": "Hi human! I am your Doc Explainer AI. How can I help you today?",
         }
     ]
-
 # Display chat messages from history on app rerun
 # Custom avatar for the assistant, default avatar for user
 for message in st.session_state.messages:
@@ -56,7 +50,7 @@ if document_path:
         with st.chat_message("user"):
             st.markdown(query)
 
-        agent = initialize_agent(processed_document)
+        agent = build_agent(processed_document)
         with st.chat_message("assistant", avatar=company_logo):
             message_placeholder = st.empty()
             # Send user's question to our agent

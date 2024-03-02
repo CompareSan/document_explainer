@@ -1,61 +1,70 @@
 import os
 
+import streamlit as st
 from dotenv import (
     find_dotenv,
     load_dotenv,
 )
+from langchain import hub
 from langchain.agents import (
-    Tool,
-    initialize_agent,
+    AgentExecutor,
+    create_react_agent,
+    load_tools,
 )
-from langchain.chains import ConversationalRetrievalChain
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
+from langchain.tools.retriever import create_retriever_tool
+from langchain_community.vectorstores import Chroma
+from langchain_core.documents import Document
+from langchain_openai import (
+    ChatOpenAI,
+    OpenAIEmbeddings,
+)
 
 load_dotenv(find_dotenv())
 
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
+LANGCHAIN_TRACING_V2 = os.environ.get("LANGCHAIN_TRACING_V2")
+LANGCHAIN_ENDPOINT = os.environ.get("LANGCHAIN_ENDPOINT")
+LANGCHAIN_API_KEY = os.environ.get("LANGCHAIN_API_KEY")
+LANGCHAIN_PROJECT = os.environ.get("LANGCHAIN_PROJECT")
 
 
-def build_agent(docs):
+@st.cache_resource
+def build_agent(_docs: list[Document]) -> AgentExecutor:
 
-    embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-    llm = ChatOpenAI(
-        temperature=0.0, model_name="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY
-    )
+    llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 
     retaining_memory = ConversationBufferWindowMemory(
-        memory_key="chat_history", k=5, return_messages=True
+        memory_key="chat_history",
+        k=5,
+        return_messages=True,
+    )
+    embeddings = OpenAIEmbeddings()
+    db = Chroma.from_documents(_docs, embeddings)
+    retriever = db.as_retriever()
+    retriever_tool = create_retriever_tool(
+        retriever,
+        "pdf_search",
+        "Search for information in the pdf document. \
+          For any questions about the pdf document, you must use this tool!",
     )
 
-    db = Chroma.from_documents(docs, embeddings)
+    tools = load_tools(["serpapi"]) + [retriever_tool]
 
-    question_answering = ConversationalRetrievalChain.from_llm(
-        llm, retriever=db.as_retriever(), memory=retaining_memory
-    )
+    prompt = hub.pull("hwchase17/react-chat")
 
-    tools = [
-        Tool(
-            name="Knowledge Base",
-            func=question_answering.run,
-            description=(
-                "use this tool when answering questions related to a document"
-            ),
-        )
-    ]
+    agent = create_react_agent(llm, tools, prompt)
 
-    agent = initialize_agent(
-        agent="chat-conversational-react-description",
+    agent_executor = AgentExecutor(
+        agent=agent,
         tools=tools,
-        llm=llm,
-        verbose=True,
-        max_iterations=3,
-        early_stopping_method="generate",
         memory=retaining_memory,
+        early_stopping_method="generate",
+        max_iterations=3,
+        verbose=True,
+        handle_parsing_errors=True,
     )
 
-    return agent
+    return agent_executor
