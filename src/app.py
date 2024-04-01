@@ -2,7 +2,6 @@ import os
 import time
 
 import streamlit as st
-
 from agent import build_agent
 from ingest import load_document
 

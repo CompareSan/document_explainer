@@ -6,7 +6,6 @@ from langchain_core.documents import Document
 
 @st.cache_data
 def load_document(file_path: str) -> list[Document]:
-
     loader = PDFPlumberLoader(file_path)
     pages = loader.load()
 

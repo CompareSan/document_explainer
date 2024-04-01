@@ -1,26 +1,6 @@
-[build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
+[tool.ruff]
+line-length = 99
+indent-width = 4
 
-[project]
-name = "document-explainer"
-authors = [
-    {name = "Compare San", email = "filippo.buonco95@gmail.com"},
-]
-description = "Tool for explaining a document"
-readme = "README.md"
-requires-python = ">=3.11"
-keywords = ["one", "two"]
-license = {text = "BSD-3-Clause"}
-
-
-dependencies = []
-#dynamic = ["version"]
-version = "0.0.0"
-
-[project.optional-dependencies]
-release = ["build", "twine"]
-dev = ["document-explainer[release]"]
-
-[tool.setuptools]
-package-dir = {"" = "src"}
+[tool.ruff.lint]
+ignore = ["E501"]
