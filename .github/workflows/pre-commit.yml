@@ -74,7 +74,7 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Save DigitalOcean kubeconfig
-        run: doctl kubernetes cluster kubeconfig save ba37348d-5645-4562-9918-cf4fa3a28e2d
+        run: doctl kubernetes cluster kubeconfig save ${{ secrets.CLUSTER_NAME }}
 
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -f deploy.yml && kubectl apply -f svc-cloud.yml
