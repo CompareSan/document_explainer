@@ -33,7 +33,6 @@ LANGCHAIN_PROJECT = os.environ.get("LANGCHAIN_PROJECT")
 
 @st.cache_resource
 def build_agent(_docs: list[Document]) -> AgentExecutor:
-
     llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 
     retaining_memory = ConversationBufferWindowMemory(
