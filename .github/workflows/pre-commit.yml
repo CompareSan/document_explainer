@@ -30,9 +30,6 @@ jobs:
     name: Push Docker image to Docker Hub
     needs: build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -62,3 +59,22 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy to Kubernetes
+    needs: push_to_registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Save DigitalOcean kubeconfig
+        run: doctl kubernetes cluster kubeconfig save ba37348d-5645-4562-9918-cf4fa3a28e2d
+
+      - name: Deploy to DigitalOcean Kubernetes
+        run: kubectl apply -f deploy.yml && kubectl apply -f svc-cloud.yml
